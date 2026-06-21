@@ -88,16 +88,8 @@ async def cb_duel_pick(call: CallbackQuery, bot: Bot):
     )
 
 
-# ── Принятие дуэли через /start duel_XXXXX ──────────────────
-
-@router.message(Command("start"))
-async def handle_duel_deep_link(message: Message):
-    """Обрабатываем /start duel_XXXXX — вступление в дуэль."""
-    args = message.text.split(maxsplit=1)
-    if len(args) < 2 or not args[1].startswith("duel_"):
-        return  # Обычный старт обрабатывает handlers/start.py
-
-    duel_id = args[1][5:]
+async def handle_duel_link(message: Message, duel_id: str):
+    """Вызывается из start.py при deep link duel_XXXXX."""
     duel = db.get_duel(duel_id)
 
     if not duel:
@@ -111,10 +103,6 @@ async def handle_duel_deep_link(message: Message):
         return
 
     user = db.get_user(message.from_user.id)
-    if not user:
-        db.create_user(message.from_user.id, message.from_user.username or message.from_user.first_name)
-        user = db.get_user(message.from_user.id)
-
     if user["coins"] < DUEL_BET:
         await message.answer(f"❌ Не хватает монет для дуэли. Нужно {DUEL_BET}💰")
         return
@@ -124,7 +112,6 @@ async def handle_duel_deep_link(message: Message):
         await message.answer("❌ У тебя нет мемов! Купи в /start → 🛒 Магазин.")
         return
 
-    # Показываем выбор мема для принятия дуэли
     await message.answer(
         f"⚔️ Тебя вызвали на дуэль!\nСтавка: <b>{DUEL_BET}</b> монет\nВыбери своего бойца:",
         reply_markup=select_meme_kb(f"duel_accept:{duel_id}", memes),

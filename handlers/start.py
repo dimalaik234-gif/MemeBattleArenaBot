@@ -1,6 +1,7 @@
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import CommandStart, Command
+from aiogram.filters.command import CommandObject
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 import database as db
@@ -19,8 +20,23 @@ def main_menu_kb():
     return builder.as_markup()
 
 
+@router.message(CommandStart(deep_link=True))
+async def cmd_start_deep(message: Message):
+    """Обработка deep link (дуэли)."""
+    from handlers.duel import handle_duel_link
+    db.init_db()
+    args = message.text.split(maxsplit=1)
+    if len(args) > 1 and args[1].startswith("duel_"):
+        # Регистрируем если новый
+        if not db.get_user(message.from_user.id):
+            db.create_user(message.from_user.id, message.from_user.username or message.from_user.first_name)
+        await handle_duel_link(message, args[1][5:])
+    else:
+        await cmd_start_normal(message)
+
+
 @router.message(CommandStart())
-async def cmd_start(message: Message):
+async def cmd_start_normal(message: Message):
     db.init_db()
     user = db.get_user(message.from_user.id)
     if not user:
