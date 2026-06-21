@@ -1,7 +1,25 @@
-BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"  # Вставь токен от @BotFather
+BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"
 
-# Игровые настройки
-START_COINS = 100          # Монет при старте
-DAILY_COINS = 50           # Монет за ежедневный бонус
-BATTLE_REWARD = 30         # Монет за победу в бою
-DUEL_BET = 50              # Ставка в дуэли с другом
+# Экономика
+START_COINS = 100
+DAILY_COINS = 50
+BATTLE_REWARD = 30
+DUEL_BET = 50
+
+# Энергия
+MAX_ENERGY = 5
+ENERGY_REFILL_HOURS = 4
+
+# Уровни: XP для достижения уровня
+LEVEL_XP = [0, 50, 120, 220, 350, 520, 750, 1050, 1400, 1800, 2300]
+XP_PER_WIN = 25
+XP_PER_LOSS = 8
+
+# Улучшение мема
+UPGRADE_BASE_COST = 40
+UPGRADE_COST_MULT = 1.5
+MAX_MEME_LEVEL = 5
+UPGRADE_BONUS = 0.10
+
+# Продажа мема
+SELL_PERCENT = 40
